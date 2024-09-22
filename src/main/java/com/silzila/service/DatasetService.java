@@ -8,6 +8,8 @@ import javax.validation.Valid;
 
 import com.silzila.exception.ExpectationFailedException;
 import com.silzila.payload.request.*;
+import com.silzila.provider.QueryExecutionStrategy;
+import com.silzila.provider.QueryExecutorFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -355,6 +357,25 @@ public class DatasetService {
         }
         return dto;
         }
+
+    public String runQuery_v2(String userId, String dBConnectionId, String datasetId, Boolean isSqlOnly,
+                           List<Query> queries)
+            throws RecordNotFoundException, SQLException, JsonMappingException, JsonProcessingException,
+            BadRequestException, ClassNotFoundException, ParseException {
+
+        DatasetDTO ds = loadDatasetInBuffer(dBConnectionId,datasetId, userId);
+        if(ds == null){
+            throw new BadRequestException("Error: Dataset not found");
+        }
+
+        QueryExecutionStrategy queryExecutionStrategy = QueryExecutorFactory.getExecutionStrategy(ds);
+        if(isSqlOnly != null && isSqlOnly){
+            return queryExecutionStrategy.getComposedQuery(userId, dBConnectionId, datasetId, queries);
+        }
+
+        return queryExecutionStrategy.getQueryResult(userId, dBConnectionId, datasetId, queries);
+    }
+
 
     // RUN QUERY
     public String runQuery(String userId, String dBConnectionId, String datasetId, Boolean isSqlOnly,

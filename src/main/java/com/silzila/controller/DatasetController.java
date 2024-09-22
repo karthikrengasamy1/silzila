@@ -104,7 +104,7 @@ public class DatasetController {
             throws RecordNotFoundException, SQLException, JsonMappingException, JsonProcessingException,
             BadRequestException, ClassNotFoundException, ParseException {
         String userId = reqHeader.get("username");
-        String queryResultOrQueryText = datasetService.runQuery(userId, dBConnectionId, datasetId, isSqlOnly, query);
+        String queryResultOrQueryText = datasetService.runQuery_v2(userId, dBConnectionId, datasetId, isSqlOnly, query);
         return ResponseEntity.status(HttpStatus.OK).body(queryResultOrQueryText);
     }
 
