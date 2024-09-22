@@ -69,6 +69,9 @@ public class DatasetService {
     @Autowired
     DatasetBuffer datasetBuffer;
 
+    @Autowired
+    QueryExecutorFactory queryExecutorFactory;
+
     ObjectMapper objectMapper = new ObjectMapper();
 
     // HELPER FUNCTION
@@ -368,7 +371,7 @@ public class DatasetService {
             throw new BadRequestException("Error: Dataset not found");
         }
 
-        QueryExecutionStrategy queryExecutionStrategy = QueryExecutorFactory.getExecutionStrategy(ds);
+        QueryExecutionStrategy queryExecutionStrategy = queryExecutorFactory.getExecutionStrategy(ds);
         if(isSqlOnly != null && isSqlOnly){
             return queryExecutionStrategy.getComposedQuery(userId, dBConnectionId, datasetId, queries);
         }
