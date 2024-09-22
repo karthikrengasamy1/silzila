@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,6 +39,8 @@ public class DatasetService {
 
     private static final Logger logger = LogManager.getLogger(DatasetService.class);
 
+    @Autowired
+    ApplicationContext applicationContext;
 
     @Autowired
     DatasetRepository datasetRepository;
@@ -68,9 +71,6 @@ public class DatasetService {
 
     @Autowired
     DatasetBuffer datasetBuffer;
-
-    @Autowired
-    QueryExecutorFactory queryExecutorFactory;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -371,7 +371,7 @@ public class DatasetService {
             throw new BadRequestException("Error: Dataset not found");
         }
 
-        QueryExecutionStrategy queryExecutionStrategy = queryExecutorFactory.getExecutionStrategy(ds);
+        QueryExecutionStrategy queryExecutionStrategy = applicationContext.getBean(QueryExecutorFactory.class).getExecutionStrategy(ds);
         if(isSqlOnly != null && isSqlOnly){
             return queryExecutionStrategy.getComposedQuery(userId, dBConnectionId, datasetId, queries);
         }
