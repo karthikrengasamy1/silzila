@@ -40,9 +40,6 @@ public class DatasetService {
     private static final Logger logger = LogManager.getLogger(DatasetService.class);
 
     @Autowired
-    ApplicationContext applicationContext;
-
-    @Autowired
     DatasetRepository datasetRepository;
 
     @Autowired
@@ -71,6 +68,9 @@ public class DatasetService {
 
     @Autowired
     DatasetBuffer datasetBuffer;
+
+    @Autowired
+    QueryExecutorFactory queryExecutorFactory;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -371,7 +371,7 @@ public class DatasetService {
             throw new BadRequestException("Error: Dataset not found");
         }
 
-        QueryExecutionStrategy queryExecutionStrategy = applicationContext.getBean(QueryExecutorFactory.class).getExecutionStrategy(ds);
+        QueryExecutionStrategy queryExecutionStrategy = queryExecutorFactory.getExecutionStrategy(ds);
         if(isSqlOnly != null && isSqlOnly){
             return queryExecutionStrategy.getComposedQuery(userId, dBConnectionId, datasetId, queries);
         }

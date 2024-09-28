@@ -3,16 +3,14 @@ package com.silzila.provider;
 import com.silzila.dto.DatasetDTO;
 import com.silzila.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QueryExecutorFactory {
 
     @Autowired
-    FlatfileQueryExecutionStrategy flatfileQueryExecutionStrategy;
-
-    @Autowired
-    DatabaseQueryExecutionStrategy databaseQueryExecutionStrategy;
+    ApplicationContext applicationContext;
 
     public QueryExecutionStrategy getExecutionStrategy(DatasetDTO ds) throws BadRequestException {
         if(ds == null){
@@ -20,9 +18,9 @@ public class QueryExecutorFactory {
         }
 
         if(ds.getIsFlatFileData()){
-            return flatfileQueryExecutionStrategy;
+            return applicationContext.getBean(FlatfileQueryExecutionStrategy.class);
         }else{
-            return databaseQueryExecutionStrategy;
+            return applicationContext.getBean(DatabaseQueryExecutionStrategy.class);
         }
 
     }
